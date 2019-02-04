@@ -15526,6 +15526,25 @@ class basic_json
         }
     }
 
+    template<typename ValueType,
+            detail::enable_if_t <
+                    not detail::is_basic_json<ValueType>::value and
+                    detail::has_from_json<basic_json_t, ValueType>::value,
+                    int> = 0>
+    void fetch(const typename object_t::key_type& key, ValueType& v) const noexcept
+    {
+        if (JSON_LIKELY(is_object()))
+        {
+            JSON_TRY
+            {
+                v = m_value.object->at(key);
+            }
+            JSON_CATCH (std::exception&)
+            {
+            }
+        }
+    }
+
     /*!
     @brief access specified object element with bounds checking
 
